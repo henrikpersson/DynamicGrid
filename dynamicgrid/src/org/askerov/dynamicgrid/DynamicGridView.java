@@ -66,6 +66,9 @@ public class DynamicGridView extends GridView {
     private boolean mHoverAnimation;
     private boolean mReorderAnimation;
     private boolean mWobbleInEditMode = true;
+    private float mWobbleStart = -2;
+    private float mWobbleEnd = 2;
+    private long mWobbleDuration = 180;
     private boolean mIsEditModeEnabled = true;
 
     private OnScrollListener mUserScrollListener;
@@ -285,10 +288,28 @@ public class DynamicGridView extends GridView {
         mOverlapIfSwitchStraightLine = getResources().getDimensionPixelSize(R.dimen.dgv_overlap_if_switch_straight_line);
     }
 
+    /**
+     * Set the wobble rotation amount.
+     * @param start Rotation value to start at, default is -2.
+     * @param end Rotation value to end at, default is 2.
+     */
+    public void setWobbleAmount(float start, float end) {
+        mWobbleStart = start;
+        mWobbleEnd = end;
+    }
+
+    /**
+     * Set the duration of the wobble animation.
+     * @param duration The duration in milliseconds, default is 180ms.
+     */
+    public void setWobbleDuration(long duration) {
+        mWobbleDuration = duration;
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void animateWobble(View v) {
         ObjectAnimator animator = createBaseWobble(v);
-        animator.setFloatValues(-2, 2);
+        animator.setFloatValues(mWobbleStart, mWobbleEnd);
         animator.start();
         mWobbleAnimators.add(animator);
     }
@@ -296,11 +317,10 @@ public class DynamicGridView extends GridView {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void animateWobbleInverse(View v) {
         ObjectAnimator animator = createBaseWobble(v);
-        animator.setFloatValues(2, -2);
+        animator.setFloatValues(mWobbleEnd, mWobbleStart);
         animator.start();
         mWobbleAnimators.add(animator);
     }
-
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private ObjectAnimator createBaseWobble(final View v) {
@@ -309,7 +329,7 @@ public class DynamicGridView extends GridView {
             v.setLayerType(LAYER_TYPE_SOFTWARE, null);
 
         ObjectAnimator animator = new ObjectAnimator();
-        animator.setDuration(180);
+        animator.setDuration(mWobbleDuration);
         animator.setRepeatMode(ValueAnimator.REVERSE);
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setPropertyName("rotation");
@@ -322,7 +342,6 @@ public class DynamicGridView extends GridView {
         });
         return animator;
     }
-
 
     private void reorderElements(int originalPosition, int targetPosition) {
         if (mDragListener != null)
