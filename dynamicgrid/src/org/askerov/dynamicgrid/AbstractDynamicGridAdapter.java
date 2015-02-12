@@ -64,6 +64,10 @@ public abstract class AbstractDynamicGridAdapter extends BaseAdapter implements 
         if (position < 0 || position >= mIdMap.size()) {
             return INVALID_ID;
         }
+
+        if(mIdMap == null)
+            return INVALID_ID;
+
         Object item = getItem(position);
         return mIdMap.get(item);
     }
