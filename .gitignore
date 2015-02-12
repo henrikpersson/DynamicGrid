@@ -13,6 +13,7 @@ dynamicgrid/build/
 # generated files
 bin/
 gen/
+build/
 
 *.properties
 
